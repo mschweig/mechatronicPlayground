@@ -171,7 +171,7 @@ bool isFinished(){
     errorStationD =    0;
     errorStationE =    0;
   }
-    
+  Serial.println("Process Finished");
   return processFinished;
 }
 
