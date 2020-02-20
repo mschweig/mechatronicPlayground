@@ -39,18 +39,16 @@ bool stationDfinished = 0;
 bool stationEfinished = 0;
 bool processFinished =  0;
 
-
 //Function Prototypes
 int productSelection(){
-
-  selectedProductA = digitalRead(PRODUCTAPIN);
-  selectedProductB = digitalRead(PRODUCTBPIN);
-
-  if (selectedProductA == HIGH)
-    selection = 1;
-  else if (selectedProductB == HIGH)
-  {
-    selection = 2;
+  
+  while(!selection){
+    if (digitalRead(PRODUCTAPIN))
+      selection = 1;
+      selectedProductA = true;
+    if (digitalRead(PRODUCTBPIN))
+      selection = 2;
+      selectedProductB = true;
   }
   return selection;
 }
@@ -170,6 +168,9 @@ bool isFinished(){
     errorStationC =    0;
     errorStationD =    0;
     errorStationE =    0;
+    selection =        0;
+    selectedProductA = 0;
+    selectedProductB = 0;
   }
   Serial.println("Process Finished");
   return processFinished;
@@ -197,10 +198,11 @@ void setup() {
 
 }
 
-
 void loop() {
 
+  //Wait for product selection
   productSelection();
+
   while(!getErrors()){
     goToStationB();
     goToStationC();
