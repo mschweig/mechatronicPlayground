@@ -20,6 +20,13 @@ const int CERRORPIN =      31;
 const int DERRORPIN =      32;
 const int EERRORPIN =      33;
 
+//check finished pins - HIGH when finished
+const int AFIN =          34;
+const int BFIN =          35;
+const int CFIN =          36;
+const int DFIN =          37;
+const int EFIN =          38;
+
 //global variables
 int selection=          0;
 bool selectedProductA=  0;
@@ -127,7 +134,8 @@ bool goToStationB(){
     //do motor stuff to Station B
 
   }
-return stationBfinished = 1;
+  digitalWrite(BFIN,HIGH);
+  return stationBfinished = 1;
 }
 
 bool goToStationC(){
@@ -135,7 +143,8 @@ bool goToStationC(){
     //do motor stuff to Station B
     
   }
-return stationCfinished = 1;
+  digitalWrite(CFIN,HIGH);
+  return stationCfinished = 1;
 }
 
 bool goToStationD(){
@@ -143,7 +152,8 @@ bool goToStationD(){
     //do motor stuff to Station B
     
   }
-return stationDfinished = 1;
+  digitalWrite(DFIN,HIGH);
+  return stationDfinished = 1;
 }
 
 bool goToStationE(){
@@ -152,7 +162,8 @@ bool goToStationE(){
     //do motor stuff to Station B
     
   }
-return stationEfinished = 1;
+  digitalWrite(EFIN,HIGH);
+  return stationEfinished = 1;
 }
 
 bool isFinished(){
@@ -171,6 +182,13 @@ bool isFinished(){
     selection =        0;
     selectedProductA = 0;
     selectedProductB = 0;
+
+    //set finished checks back to low
+    digitalWrite(AFIN,LOW);
+    digitalWrite(BFIN,LOW);
+    digitalWrite(CFIN,LOW);
+    digitalWrite(DFIN,LOW);
+    digitalWrite(EFIN,LOW);
   }
   Serial.println("Process Finished");
   return processFinished;
