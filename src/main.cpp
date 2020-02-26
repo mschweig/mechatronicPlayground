@@ -169,9 +169,9 @@ bool goToStationE(){
   return stationEfinished = 1;
 }
 
-void enableMotor(int steps1, int steps2){
-  setRevolutions[1] = steps1;
-  setRevolutions[2] = steps2;
+void enableMotor(byte firstByte, byte secondByte){
+  setRevolutions[1] = firstByte;
+  setRevolutions[2] = secondByte;
   Serial1.write(setRevolutions, 3);
   Serial.println(Serial1.read());
 }
