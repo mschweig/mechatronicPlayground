@@ -46,6 +46,9 @@ bool stationDfinished = 0;
 bool stationEfinished = 0;
 bool processFinished =  0;
 
+//motor registers
+byte setRevolutions[3] = {0x07, 0x11, 0x94}; //First byte is register - MSB First
+
 //Function Prototypes
 int productSelection(){
   
@@ -164,6 +167,13 @@ bool goToStationE(){
   }
   digitalWrite(EFIN,HIGH);
   return stationEfinished = 1;
+}
+
+void enableMotor(int steps1, int steps2){
+  setRevolutions[1] = steps1;
+  setRevolutions[2] = steps2;
+  Serial1.write(setRevolutions, 3);
+  Serial.println(Serial1.read());
 }
 
 bool isFinished(){
