@@ -5,19 +5,20 @@ import ttk
 import RPi.GPIO as GPIO
 import time
 import serial
+import threading
+import Queue
 
-#Start Serial Communication with Arduino Mega 
+#Start Serial Communication with Arduino Mega in another thread
 ser = serial.Serial ("/dev/ttyS0",9600)
 
 
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup(35, GPIO.OUT)
+GPIO.setup(38, GPIO.OUT)
 GPIO.setup(37, GPIO.OUT)
-GPIO.output(35, GPIO.LOW) #Produkt A
+GPIO.output(38, GPIO.LOW) #Produkt A
 GPIO.output(37, GPIO.LOW) #Produkt B
 
-lastState = 100;
-
+lastState = 100
 win = Tk()
 
 myFont = tkFont.Font(family = 'Helvetica', size = 36, weight = 'bold')
@@ -40,9 +41,8 @@ def productB():
 def exitProgram():
     print("Exit Button pressed")
     GPIO.cleanup()
-    win.quit()  
-
-
+    win.quit()
+    
 win.title("Produktwahl")
 win.geometry('800x480')
 
@@ -57,18 +57,28 @@ progressbar = ttk.Progressbar(orient=HORIZONTAL, length=200, mode='determinate')
 progressbar.pack(side=TOP,pady=10)
 #progressbar.start()
 
+#read data from serial port in a new thread
+def read_from_port(ser):
+    while (ser.inWaiting() > 0):
+
+        while True:
+           print("received data via serial: ")
+           serialData = ser.readline().decode()
+           print(serialData)
+           
+#start a new thread for serial readings
+thread = threading.Thread(target=read_from_port, args=(ser,))
+thread.start()
+
+serialData = 0
+
 try:
     while 1:
         win.update_idletasks()
         win.update()
-
-        serialData = ser.read()              #read serial port
-        sleep(0.03)
-        data_left = ser.inWaiting()          #check for remaining byte
-        serialData += ser.read(data_left)
         
         #process finished - reset everything
-        if serialData == "Finished" and lastState != 100:
+        if serialData == 100 and lastState != 100:
             #reset progressbar for next process
             progressbar.stop()
             print("Finished")
@@ -78,22 +88,25 @@ try:
             tkMessageBox.showinfo('Produktwahl', 'Produkt fertig')
             lastState = 100
         
-        if serialData == "StationBfinished" and lastState !=25:
+        if serialData == 25 and lastState !=25:
             progressbar.stop()
             progressbar.step(25)
             print("25")
             lastState = 25
-        if serialData == "StationCfinished" and lastState !=50:
+            
+        if serialData == 50 and lastState !=50:
             progressbar.stop()
             progressbar.step(50)
             lastState = 50
             print("50")
-        if serialData == "StationDfinished" and lastState !=75:
+            
+        if serialData == 75 and lastState !=75:
             progressbar.stop()
             progressbar.step(75)
             print("75")
             lastState = 75
-        if serialData == "StationEfinished" and lastState !=99:
+            
+        if serialData == 99 and lastState !=99:
             progressbar.stop()
             progressbar.step(99)
             print("99")
