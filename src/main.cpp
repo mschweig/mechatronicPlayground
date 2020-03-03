@@ -196,11 +196,6 @@ bool isFinished(){
     selectedProductB = 0;
 
     //set finished checks back to low
-    digitalWrite(AFIN,LOW);
-    digitalWrite(BFIN,LOW);
-    digitalWrite(CFIN,LOW);
-    digitalWrite(DFIN,LOW);
-    digitalWrite(EFIN,LOW);
   }
   Serial.println("Process Finished");
   return processFinished;
@@ -225,6 +220,12 @@ void setup() {
   pinMode(CERRORPIN,INPUT);
   pinMode(DERRORPIN,INPUT);
   pinMode(EERRORPIN,INPUT);
+  pinMode(AFIN,INPUT);
+  pinMode(BFIN,INPUT);
+  pinMode(CFIN,INPUT);
+  pinMode(DFIN,INPUT);
+  pinMode(EFIN,INPUT);
+
 
 }
 
