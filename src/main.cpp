@@ -46,7 +46,7 @@ bool stationDfinished = 0;
 bool stationEfinished = 0;
 bool processFinished =  0;
 
-//motor registers
+//motor revolution register
 byte setRevolutions[3] = {0x07, 0x11, 0x94}; //First byte is register - MSB First
 
 //Function Prototypes
@@ -146,7 +146,12 @@ bool goToStationB(){
     //do motor stuff to Station B
 
   }
+
+  //Wait until station is finished
   while(!digitalRead(BFIN));
+
+  //write to raspi
+  Serial2.write(25);
   return stationBfinished = 1;
 }
 
@@ -155,7 +160,13 @@ bool goToStationC(){
     //do motor stuff to Station B
     
   }
+
+  //wait until station is finished
   while(!digitalRead(CFIN));
+
+  //write to raspi
+  Serial2.write(50);
+
   return stationCfinished = 1;
 }
 
@@ -164,7 +175,13 @@ bool goToStationD(){
     //do motor stuff to Station B
     
   }
+
+  //wait until station is finished
   while(!digitalRead(DFIN));
+
+  //write to raspi
+  Serial2.write(75);
+
   return stationDfinished = 1;
 }
 
@@ -174,7 +191,12 @@ bool goToStationE(){
     //do motor stuff to Station B
     
   }
+
+  //wait until station is finished
   while(!digitalRead(EFIN));
+
+  //write to raspi
+  Serial2.write(99);
   return stationEfinished = 1;
 }
 
@@ -194,9 +216,11 @@ bool isFinished(){
     selection =        0;
     selectedProductA = 0;
     selectedProductB = 0;
-
-    //set finished checks back to low
   }
+
+  //write to raspi
+  Serial2.write(100);
+
   Serial.println("Process Finished");
   return processFinished;
 }
@@ -205,6 +229,12 @@ void setup() {
 
   //Serial Port to PC
   Serial.begin(9600);
+
+  //Serial Port to Motor
+  Serial1.begin(9600);
+
+  //Serial Port to Raspi
+  Serial2.begin(9600);
 
   //set pinModes
   pinMode(PRODUCTBPIN,INPUT);
@@ -225,8 +255,6 @@ void setup() {
   pinMode(CFIN,INPUT);
   pinMode(DFIN,INPUT);
   pinMode(EFIN,INPUT);
-
-
 }
 
 void loop() {
