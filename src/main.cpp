@@ -131,13 +131,22 @@ bool getErrors(){
   return errorCheck;
 }
 
+void enableMotor(byte firstByte, byte secondByte){
+  setRevolutions[1] = firstByte;
+  setRevolutions[2] = secondByte;
+  //set the given number of revolutions to the driver
+  Serial1.write(setRevolutions, 3);
+  //Flush Serial Register and print to consolse
+  Serial.println(Serial1.read());
+}
+
 bool goToStationB(){
 
   if (BREADYPIN && !BERRORPIN){
     //do motor stuff to Station B
 
   }
-  digitalWrite(BFIN,HIGH);
+  while(!digitalRead(BFIN));
   return stationBfinished = 1;
 }
 
@@ -146,7 +155,7 @@ bool goToStationC(){
     //do motor stuff to Station B
     
   }
-  digitalWrite(CFIN,HIGH);
+  while(!digitalRead(CFIN));
   return stationCfinished = 1;
 }
 
@@ -155,7 +164,7 @@ bool goToStationD(){
     //do motor stuff to Station B
     
   }
-  digitalWrite(DFIN,HIGH);
+  while(!digitalRead(DFIN));
   return stationDfinished = 1;
 }
 
@@ -165,15 +174,8 @@ bool goToStationE(){
     //do motor stuff to Station B
     
   }
-  digitalWrite(EFIN,HIGH);
+  while(!digitalRead(EFIN));
   return stationEfinished = 1;
-}
-
-void enableMotor(byte firstByte, byte secondByte){
-  setRevolutions[1] = firstByte;
-  setRevolutions[2] = secondByte;
-  Serial1.write(setRevolutions, 3);
-  Serial.println(Serial1.read());
 }
 
 bool isFinished(){
