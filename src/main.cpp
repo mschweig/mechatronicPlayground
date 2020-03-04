@@ -119,6 +119,10 @@ bool getErrors(){
   //print errorString to see the Station where the error occured
   Serial.println(errorID);
 
+  //Send errorString to Raspberry
+  for (uint8_t i = 1; i<=errorID.length();i++)
+    Serial2.write(errorID[i]);
+
   if (errorStationA || errorStationB || errorStationC || errorStationD || errorStationE){
     //stop belt because there is an error
     digitalWrite(BELTSTATEPIN,LOW);
