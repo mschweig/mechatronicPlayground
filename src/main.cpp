@@ -1,5 +1,10 @@
 #include <Arduino.h>
 #include <string.h>
+#include <AFMotor.h>
+
+// Connect a stepper motor with 200 steps per revolution
+// to motor port #2 (M3 and M4)
+AF_Stepper motor(200, 2);
 
 //type of selected product is HIGH
 const int PRODUCTAPIN = 22;
@@ -45,9 +50,6 @@ bool stationCfinished = 0;
 bool stationDfinished = 0;
 bool stationEfinished = 0;
 bool processFinished =  0;
-
-//motor revolution register
-byte setRevolutions[3] = {0x07, 0x11, 0x94}; //First byte is register - MSB First
 
 //Function Prototypes
 int productSelection(){
@@ -135,13 +137,16 @@ bool getErrors(){
   return errorCheck;
 }
 
-void enableMotor(byte firstByte, byte secondByte){
-  setRevolutions[1] = firstByte;
-  setRevolutions[2] = secondByte;
-  //set the given number of revolutions to the driver
-  Serial1.write(setRevolutions, 3);
-  //Flush Serial Register and print to consolse
-  Serial.println(Serial1.read());
+void enableMotor(int steps){
+  //accelerate up to 30rpm
+  for (int i = 1; i < 30; i++){
+    motor.setSpeed(i);
+    motor.onestep(FORWARD, DOUBLE);
+    delay(20);
+  }
+  //step forward with double mode --> more torque
+  motor.step(steps, FORWARD, DOUBLE); 
+  motor.release();
 }
 
 bool goToStationB(){
@@ -234,9 +239,6 @@ void setup() {
   //Serial Port to PC
   Serial.begin(9600);
 
-  //Serial Port to Motor
-  Serial1.begin(9600);
-
   //Serial Port to Raspi
   Serial2.begin(9600);
 
@@ -262,7 +264,7 @@ void setup() {
 }
 
 void loop() {
-
+  
   //Wait for product selection
   productSelection();
 
