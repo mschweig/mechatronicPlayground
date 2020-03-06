@@ -32,6 +32,13 @@ const int CFIN =          36;
 const int DFIN =          37;
 const int EFIN =          38;
 
+//load pins - HIGH when stations need parts
+const int ALOAD =          40;
+const int BLOAD =          41;
+const int CLOAD =          42;
+const int DLOAD =          43;
+const int ELOAD =          44;
+
 //global variables
 int selection=          0;
 bool selectedProductA=  0;
@@ -137,9 +144,9 @@ bool getErrors(){
   return errorCheck;
 }
 
-void enableMotor(int steps){
+void enableMotor(int steps, int speed){
   //accelerate up to 30rpm
-  for (int i = 1; i < 30; i++){
+  for (uint8_t i = 1; i <= speed; i++){
     motor.setSpeed(i);
     motor.onestep(FORWARD, DOUBLE);
     delay(20);
