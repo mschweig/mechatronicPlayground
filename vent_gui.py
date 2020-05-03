@@ -9,7 +9,8 @@ import threading
 import Queue
 
 #Start Serial Communication with Arduino Mega in another thread
-ser = serial.Serial ("/dev/ttyS0",9600)
+ser = serial.Serial ("/dev/ttyACM0",9600,timeout=0, writeTimeout=0)
+
 
 
 GPIO.setmode(GPIO.BOARD)
@@ -62,27 +63,31 @@ progressbar = ttk.Progressbar(orient=HORIZONTAL, length=200, mode='determinate')
 progressbar.pack(side=TOP,pady=10)
 progressbar.start()
 
+#Arduino RCV
+serialText = Text(win, height=2, width=30, background = "white")
+serialText.pack()
+serialText.insert(END, "Test")
 
-#read data from serial port in a new thread
-def read_from_port(ser):
-    while (ser.inWaiting() > 0):
+#read data from serial port function
+def readSerial(win):
 
-        while True:
-           print("received data via serial: ")
-           serialData = ser.readline().decode()
-           print(serialData)
+    while(ser.inWaiting() > 0):
+        
+        print("received data via serial: ")
+        serialData = ser.readline().decode()
+        serialText.insert(END, serialData)
+        serialText.see(END)
+        serialText.update_idletasks()
+        print(serialData)
+    win.after(500, readSerial, win)
            
 #start a new thread for serial readings
-thread = threading.Thread(target=read_from_port, args=(ser,))
-thread.start()
+#thread = threading.Thread(target=read_from_port, args=(ser,))
+#thread.setDaemon(True)
+#thread.start()
 
-serialData = 0
-
-try:
-    while 1:
-        win.update_idletasks()
-        win.update()
+readSerial(win)
+win.mainloop()
         
-except KeyboardInterrupt:
-   GPIO.cleanup()
+
    
